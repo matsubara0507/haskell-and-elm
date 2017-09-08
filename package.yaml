@@ -1,0 +1,22 @@
+name:                haskell-and-elm
+version:             0.1.0.0
+homepage:            https://github.com/matsubara0507/haskell-and-elm#readme
+license:             MIT
+author:              MATSUBARA Nobutada
+copyright:           2017 MATSUBARA Nobutada
+category:            Web
+extra-source-files:
+- README.md
+
+dependencies:
+  - aeson
+  - base >= 4.7 && < 5
+  - extensible
+  - elm-export
+  - lens
+  - servant-elm
+
+executables:
+  haskell-and-elm:
+    source-dirs:      src
+    main:             Main.hs

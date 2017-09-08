@@ -1,0 +1,30 @@
+-- This file has been generated from package.yaml by hpack version 0.17.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           haskell-and-elm
+version:        0.1.0.0
+category:       Web
+homepage:       https://github.com/matsubara0507/haskell-and-elm#readme
+author:         MATSUBARA Nobutada
+copyright:      2017 MATSUBARA Nobutada
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+
+extra-source-files:
+    README.md
+
+executable haskell-and-elm
+  main-is: Main.hs
+  hs-source-dirs:
+      src
+  build-depends:
+      aeson
+    , base >= 4.7 && < 5
+    , extensible
+    , elm-export
+    , lens
+    , servant-elm
+  default-language: Haskell2010
