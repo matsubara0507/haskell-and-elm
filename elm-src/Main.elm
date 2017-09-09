@@ -3,7 +3,7 @@ module Main exposing (..)
 import Generated.TodoAPI as API exposing (getTodos)
 
 import Html as Html exposing (..)
-import Html.Attributes exposing (style)
+import Html.Attributes exposing (style, type_, checked)
 import Html.Events exposing (onClick)
 import Http
 import RemoteData exposing (RemoteData(..))
@@ -24,44 +24,41 @@ type alias Model =
 
 type Msg
   = FetchTodos (Result Http.Error (List API.Todo))
-  | PushButton
 
 model : Model
 model = { todos = NotAsked }
 
 init : Model -> (Model, Cmd Msg)
-init model =  (model, Cmd.none)
+init model =  (model, fetchTodos)
 
 view : Model -> Html Msg
 view model =
   div []
-    [ h2 [] [ text "ToDo !!" ]
-    , button [ onClick PushButton ] [ text "Get ToDo!" ]
-    , br [] []
+    [ h1 [] [ text "ToDo List !!" ]
     , viewToDos model
     ]
 
-viewToDos : Model -> Html msg
+viewToDos : Model -> Html Msg
 viewToDos model =
   case model.todos of
     NotAsked -> text "Please Push Button."
     Loading -> text "Loading..."
     Failure err -> text ("Error: " ++ toString err)
-    Success todos -> ul [] $ List.map viewTodo todos
+    Success todos ->
+      List.map viewTodo todos
+      |> (::) (tr [] [ th [] [ text "ToDo" ], th [] [ text "Done" ] ])
+      |> table []
 
-viewTodo : API.Todo -> Html msg
-viewTodo todo = li [ colorWithDone todo ] [ text todo.title ]
-
-colorWithDone : API.Todo -> Attribute msg
-colorWithDone todo =
-  style [ ("color", if todo.done then "blue" else "red") ]
+viewTodo : API.Todo -> Html Msg
+viewTodo todo =
+  tr [] [ td [] [ text todo.title ]
+        , td [] [ input [ type_ "checkbox", checked todo.done ] [] ] ]
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     FetchTodos (Ok todos) -> ({ model | todos = Success todos }, Cmd.none)
     FetchTodos (Err _) -> ({ model | todos = Failure "Something went wrong.." }, Cmd.none)
-    PushButton -> (model, fetchTodos)
 
 fetchTodos : Cmd Msg
 fetchTodos =

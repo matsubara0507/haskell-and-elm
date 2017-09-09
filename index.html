@@ -9552,35 +9552,73 @@ var _matsubara0507$haskell_and_elm$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
 };
 var _matsubara0507$haskell_and_elm$Main$baseUrl = 'localhost:8000';
-var _matsubara0507$haskell_and_elm$Main$colorWithDone = function (todo) {
-	return _elm_lang$html$Html_Attributes$style(
-		{
-			ctor: '::',
-			_0: {
+var _matsubara0507$haskell_and_elm$Main$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		if (_p0._0.ctor === 'Ok') {
+			return {
 				ctor: '_Tuple2',
-				_0: 'color',
-				_1: todo.done ? 'blue' : 'red'
-			},
-			_1: {ctor: '[]'}
-		});
-};
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						todos: _krisajenkins$remotedata$RemoteData$Success(_p0._0._0)
+					}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						todos: _krisajenkins$remotedata$RemoteData$Failure('Something went wrong..')
+					}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		}
+	});
 var _matsubara0507$haskell_and_elm$Main$viewTodo = function (todo) {
 	return A2(
-		_elm_lang$html$Html$li,
+		_elm_lang$html$Html$tr,
+		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _matsubara0507$haskell_and_elm$Main$colorWithDone(todo),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text(todo.title),
-			_1: {ctor: '[]'}
+			_0: A2(
+				_elm_lang$html$Html$td,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(todo.title),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$td,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$input,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$type_('checkbox'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$checked(todo.done),
+									_1: {ctor: '[]'}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
 		});
 };
 var _matsubara0507$haskell_and_elm$Main$viewToDos = function (model) {
-	var _p0 = model.todos;
-	switch (_p0.ctor) {
+	var _p1 = model.todos;
+	switch (_p1.ctor) {
 		case 'NotAsked':
 			return _elm_lang$html$Html$text('Please Push Button.');
 		case 'Loading':
@@ -9590,23 +9628,45 @@ var _matsubara0507$haskell_and_elm$Main$viewToDos = function (model) {
 				A2(
 					_elm_lang$core$Basics_ops['++'],
 					'Error: ',
-					_elm_lang$core$Basics$toString(_p0._0)));
+					_elm_lang$core$Basics$toString(_p1._0)));
 		default:
 			return A2(
-				_vmchale$elm_composition$Data_Composition_ops['$'],
-				_elm_lang$html$Html$ul(
-					{ctor: '[]'}),
-				A2(_elm_lang$core$List$map, _matsubara0507$haskell_and_elm$Main$viewTodo, _p0._0));
+				_elm_lang$html$Html$table,
+				{ctor: '[]'},
+				A2(
+					F2(
+						function (x, y) {
+							return {ctor: '::', _0: x, _1: y};
+						}),
+					A2(
+						_elm_lang$html$Html$tr,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$th,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('ToDo'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$th,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Done'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}),
+					A2(_elm_lang$core$List$map, _matsubara0507$haskell_and_elm$Main$viewTodo, _p1._0)));
 	}
 };
-var _matsubara0507$haskell_and_elm$Main$init = function (model) {
-	return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-};
-var _matsubara0507$haskell_and_elm$Main$model = {todos: _krisajenkins$remotedata$RemoteData$NotAsked};
-var _matsubara0507$haskell_and_elm$Main$Model = function (a) {
-	return {todos: a};
-};
-var _matsubara0507$haskell_and_elm$Main$PushButton = {ctor: 'PushButton'};
 var _matsubara0507$haskell_and_elm$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -9614,75 +9674,31 @@ var _matsubara0507$haskell_and_elm$Main$view = function (model) {
 		{
 			ctor: '::',
 			_0: A2(
-				_elm_lang$html$Html$h2,
+				_elm_lang$html$Html$h1,
 				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text('ToDo !!'),
+					_0: _elm_lang$html$Html$text('ToDo List !!'),
 					_1: {ctor: '[]'}
 				}),
 			_1: {
 				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$button,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onClick(_matsubara0507$haskell_and_elm$Main$PushButton),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('Get ToDo!'),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$br,
-						{ctor: '[]'},
-						{ctor: '[]'}),
-					_1: {
-						ctor: '::',
-						_0: _matsubara0507$haskell_and_elm$Main$viewToDos(model),
-						_1: {ctor: '[]'}
-					}
-				}
+				_0: _matsubara0507$haskell_and_elm$Main$viewToDos(model),
+				_1: {ctor: '[]'}
 			}
 		});
+};
+var _matsubara0507$haskell_and_elm$Main$model = {todos: _krisajenkins$remotedata$RemoteData$NotAsked};
+var _matsubara0507$haskell_and_elm$Main$Model = function (a) {
+	return {todos: a};
 };
 var _matsubara0507$haskell_and_elm$Main$FetchTodos = function (a) {
 	return {ctor: 'FetchTodos', _0: a};
 };
 var _matsubara0507$haskell_and_elm$Main$fetchTodos = A2(_elm_lang$http$Http$send, _matsubara0507$haskell_and_elm$Main$FetchTodos, _matsubara0507$haskell_and_elm$Generated_TodoAPI$getTodos);
-var _matsubara0507$haskell_and_elm$Main$update = F2(
-	function (msg, model) {
-		var _p1 = msg;
-		if (_p1.ctor === 'FetchTodos') {
-			if (_p1._0.ctor === 'Ok') {
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							todos: _krisajenkins$remotedata$RemoteData$Success(_p1._0._0)
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			} else {
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							todos: _krisajenkins$remotedata$RemoteData$Failure('Something went wrong..')
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			}
-		} else {
-			return {ctor: '_Tuple2', _0: model, _1: _matsubara0507$haskell_and_elm$Main$fetchTodos};
-		}
-	});
+var _matsubara0507$haskell_and_elm$Main$init = function (model) {
+	return {ctor: '_Tuple2', _0: model, _1: _matsubara0507$haskell_and_elm$Main$fetchTodos};
+};
 var _matsubara0507$haskell_and_elm$Main$main = _elm_lang$html$Html$program(
 	{
 		init: _matsubara0507$haskell_and_elm$Main$init(_matsubara0507$haskell_and_elm$Main$model),
