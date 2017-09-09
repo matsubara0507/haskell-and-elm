@@ -16,7 +16,7 @@ cabal-version:  >= 1.10
 extra-source-files:
     README.md
 
-executable haskell-and-elm
+executable server
   main-is: Main.hs
   hs-source-dirs:
       src
@@ -26,5 +26,10 @@ executable haskell-and-elm
     , extensible
     , elm-export
     , lens
+    , servant
     , servant-elm
+    , servant-server
+    , warp
+  other-modules:
+      API
   default-language: Haskell2010

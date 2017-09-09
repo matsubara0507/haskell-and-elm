@@ -14,9 +14,13 @@ dependencies:
   - extensible
   - elm-export
   - lens
+  - servant
   - servant-elm
+  - servant-server
 
 executables:
-  haskell-and-elm:
+  server:
     source-dirs:      src
     main:             Main.hs
+    dependencies:
+      - warp
