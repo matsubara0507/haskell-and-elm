@@ -16,8 +16,7 @@ cabal-version:  >= 1.10
 extra-source-files:
     README.md
 
-executable server
-  main-is: Main.hs
+library
   hs-source-dirs:
       src
   build-depends:
@@ -29,7 +28,23 @@ executable server
     , servant
     , servant-elm
     , servant-server
+  exposed-modules:
+      TodoAPI
+  default-language: Haskell2010
+
+executable server
+  main-is: Main.hs
+  hs-source-dirs:
+      app
+  build-depends:
+      aeson
+    , base >= 4.7 && < 5
+    , extensible
+    , elm-export
+    , lens
+    , servant
+    , servant-elm
+    , servant-server
+    , haskell-and-elm
     , warp
-  other-modules:
-      API
   default-language: Haskell2010

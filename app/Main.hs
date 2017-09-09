@@ -1,8 +1,8 @@
 module Main where
 
-import           API                      (api, server)
 import qualified Network.Wai.Handler.Warp as Warp
 import           Servant.Server           (serve)
+import           TodoAPI                  (api, server)
 
 main :: IO ()
 main = do

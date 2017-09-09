@@ -2,7 +2,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TypeOperators #-}
 
-module API where
+module TodoAPI where
 
 import           Data.Aeson               (ToJSON)
 import           Data.Proxy               (Proxy (..))

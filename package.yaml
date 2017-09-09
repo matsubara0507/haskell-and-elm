@@ -18,9 +18,17 @@ dependencies:
   - servant-elm
   - servant-server
 
+library:
+  source-dirs: src
+  exposed-modules:
+    - TodoAPI
+  other-modules: []
+
 executables:
   server:
-    source-dirs:      src
+    source-dirs:      app
     main:             Main.hs
     dependencies:
+      - haskell-and-elm
       - warp
+    other-modules: []
