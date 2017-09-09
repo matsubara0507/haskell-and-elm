@@ -6,7 +6,9 @@ author:              MATSUBARA Nobutada
 copyright:           2017 MATSUBARA Nobutada
 category:            Web
 extra-source-files:
-- README.md
+  - README.md
+
+ghc-options: -Wall
 
 dependencies:
   - aeson
@@ -15,13 +17,14 @@ dependencies:
   - elm-export
   - lens
   - servant
+  - servant-ede
   - servant-elm
   - servant-server
 
 library:
   source-dirs: src
   exposed-modules:
-    - TodoAPI
+    - Todo
   other-modules: []
 
 executables:
@@ -31,4 +34,13 @@ executables:
     dependencies:
       - haskell-and-elm
       - warp
+    other-modules: []
+
+tests:
+  generate:
+    source-dirs: app
+    main: Generate.hs
+    dependencies:
+      - haskell-and-elm
+      - shelly
     other-modules: []

@@ -1,0 +1,23 @@
+{
+    "version": "0.1.0",
+    "summary": "Sample for haskell and elm",
+    "repository": "https://github.com/matsubara0507/haskell-and-elm.git",
+    "license": "MIT",
+    "source-directories": [
+        "elm-src"
+    ],
+    "exposed-modules": [],
+    "dependencies": {
+        "elm-lang/core": "5.1.1 <= v < 6.0.0",
+        "elm-lang/html": "2.0.0 <= v < 3.0.0",
+        "elm-lang/http": "1.0.0 <= v < 2.0.0",
+        "elm-lang/navigation": "2.0.0 <= v < 3.0.0",
+        "elm-community/json-extra": "2.0.0 <= v < 3.0.0",
+        "elm-community/list-extra": "6.0.0 <= v < 7.0.0",
+        "Bogdanp/elm-route": "4.0.0 <= v < 5.0.0",
+        "vmchale/elm-composition": "2.0.0 <= v < 3.0.0",
+        "krisajenkins/remotedata": "4.3.0 <= v < 5.0.0",
+        "NoRedInk/elm-decode-pipeline": "3.0.0 <= v < 4.0.0"
+    },
+    "elm-version": "0.18.0 <= v < 0.19.0"
+}
