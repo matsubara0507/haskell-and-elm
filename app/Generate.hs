@@ -4,7 +4,7 @@ module Main where
 
 import           Data.Proxy  (Proxy (..))
 import           Elm         (Spec (Spec), specsToDir, toElmDecoderSource,
-                              toElmTypeSource)
+                              toElmTypeSource, toElmEncoderSource)
 import           Servant.Elm (ElmOptions (..), UrlPrefix (Static),
                               defElmImports, defElmOptions,
                               generateElmForAPIWith)
@@ -22,6 +22,7 @@ spec = Spec ["Generated", "TodoAPI"]
             (defElmImports
              : toElmTypeSource    (Proxy :: Proxy Todo)
              : toElmDecoderSource (Proxy :: Proxy Todo)
+             : toElmEncoderSource (Proxy :: Proxy Todo)
              : generateElmForAPIWith elmOpts  (Proxy :: Proxy CRUD))
 
 main :: IO ()

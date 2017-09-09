@@ -9292,6 +9292,102 @@ var _krisajenkins$remotedata$RemoteData$update = F2(
 				};
 		}
 	});
+var _matsubara0507$haskell_and_elm$Generated_TodoAPI$deleteTodosById = function (capture_id) {
+	return _elm_lang$http$Http$request(
+		{
+			method: 'DELETE',
+			headers: {ctor: '[]'},
+			url: A2(
+				_elm_lang$core$String$join,
+				'/',
+				{
+					ctor: '::',
+					_0: 'http://localhost:8080',
+					_1: {
+						ctor: '::',
+						_0: 'todos',
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$http$Http$encodeUri(
+								_elm_lang$core$Basics$toString(capture_id)),
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
+			body: _elm_lang$http$Http$emptyBody,
+			expect: _elm_lang$http$Http$expectStringResponse(
+				function (_p0) {
+					var _p1 = _p0;
+					return _elm_lang$core$String$isEmpty(_p1.body) ? _elm_lang$core$Result$Ok(
+						{ctor: '_Tuple0'}) : _elm_lang$core$Result$Err('Expected the response body to be empty');
+				}),
+			timeout: _elm_lang$core$Maybe$Nothing,
+			withCredentials: false
+		});
+};
+var _matsubara0507$haskell_and_elm$Generated_TodoAPI$encodeTodo = function (x) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'todoId',
+				_1: _elm_lang$core$Json_Encode$int(x.todoId)
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'title',
+					_1: _elm_lang$core$Json_Encode$string(x.title)
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'done',
+						_1: _elm_lang$core$Json_Encode$bool(x.done)
+					},
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _matsubara0507$haskell_and_elm$Generated_TodoAPI$putTodosById = F2(
+	function (capture_id, body) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'PUT',
+				headers: {ctor: '[]'},
+				url: A2(
+					_elm_lang$core$String$join,
+					'/',
+					{
+						ctor: '::',
+						_0: 'http://localhost:8080',
+						_1: {
+							ctor: '::',
+							_0: 'todos',
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$http$Http$encodeUri(
+									_elm_lang$core$Basics$toString(capture_id)),
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				body: _elm_lang$http$Http$jsonBody(
+					_matsubara0507$haskell_and_elm$Generated_TodoAPI$encodeTodo(body)),
+				expect: _elm_lang$http$Http$expectStringResponse(
+					function (_p2) {
+						var _p3 = _p2;
+						return _elm_lang$core$String$isEmpty(_p3.body) ? _elm_lang$core$Result$Ok(
+							{ctor: '_Tuple0'}) : _elm_lang$core$Result$Err('Expected the response body to be empty');
+					}),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
 var _matsubara0507$haskell_and_elm$Generated_TodoAPI$Todo = F3(
 	function (a, b, c) {
 		return {todoId: a, title: b, done: c};
@@ -9331,6 +9427,30 @@ var _matsubara0507$haskell_and_elm$Generated_TodoAPI$getTodos = _elm_lang$http$H
 		timeout: _elm_lang$core$Maybe$Nothing,
 		withCredentials: false
 	});
+var _matsubara0507$haskell_and_elm$Generated_TodoAPI$postTodos = function (body) {
+	return _elm_lang$http$Http$request(
+		{
+			method: 'POST',
+			headers: {ctor: '[]'},
+			url: A2(
+				_elm_lang$core$String$join,
+				'/',
+				{
+					ctor: '::',
+					_0: 'http://localhost:8080',
+					_1: {
+						ctor: '::',
+						_0: 'todos',
+						_1: {ctor: '[]'}
+					}
+				}),
+			body: _elm_lang$http$Http$jsonBody(
+				_matsubara0507$haskell_and_elm$Generated_TodoAPI$encodeTodo(body)),
+			expect: _elm_lang$http$Http$expectJson(_matsubara0507$haskell_and_elm$Generated_TodoAPI$decodeTodo),
+			timeout: _elm_lang$core$Maybe$Nothing,
+			withCredentials: false
+		});
+};
 var _vmchale$elm_composition$Data_Composition$second = F2(
 	function (f, _p0) {
 		var _p1 = _p0;

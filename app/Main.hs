@@ -4,7 +4,13 @@
 
 module Main where
 
+import           Control.Arrow            (second)
+import           Control.Concurrent.STM   (TVar, atomically, modifyTVar,
+                                           newTVar, readTVar, writeTVar)
+import           Control.Monad.IO.Class   (liftIO)
 import           Data.Aeson
+import           Data.IntMap              (IntMap)
+import qualified Data.IntMap              as IntMap
 import           Data.Proxy               (Proxy (..))
 import qualified Network.Wai.Handler.Warp as Warp
 import           Servant.API              ((:<|>) (..), Get)
@@ -15,9 +21,10 @@ import qualified Todo
 
 main :: IO ()
 main = do
+  db <- atomically $ newTVar (length initTodoList, IntMap.fromList initTodoList)
   _ <- loadTemplates api [] "."
   putStrLn "Listening on port 8080"
-  Warp.run 8080 $ serve api server
+  Warp.run 8080 $ serve api (server db)
 
 type API = Get '[HTML "index.html"] Object
        :<|> Todo.CRUD
@@ -25,16 +32,30 @@ type API = Get '[HTML "index.html"] Object
 api :: Proxy API
 api = Proxy
 
-server :: Server API
-server = index
+server :: TVar (Int, IntMap Todo) -> Server API
+server db = index
      :<|> getTodos
+     :<|> postTodo
+     :<|> putTodoId
+     :<|> deleteTodoId
   where
     index = pure mempty
-    getTodos = pure todoList
+    getTodos = liftIO $ IntMap.elems . snd <$> atomically (readTVar db)
+    postTodo todo = liftIO . atomically $ do
+      (maxId, m) <- readTVar db
+      let
+        newId = maxId + 1
+        newTodo = todo { todoId = newId }
+      writeTVar db (newId, IntMap.insert newId newTodo m)
+      pure newTodo
+    putTodoId tid todo =
+      liftIO . atomically . modifyTVar db . second $ IntMap.insert tid todo
+    deleteTodoId tid   =
+      liftIO . atomically . modifyTVar db . second $ IntMap.delete tid
 
-todoList :: [Todo]
-todoList =
-  [ Todo 1 "アドベントカレンダーを書く" True
-  , Todo 2 "Haskellで仕事する" False
-  , Todo 3 "寝る" False
+initTodoList :: [(Int, Todo)]
+initTodoList =
+  [ (1, Todo 1 "アドベントカレンダーを書く" True)
+  , (2, Todo 2 "Haskellで仕事する" False)
+  , (3, Todo 3 "寝る" False)
   ]
