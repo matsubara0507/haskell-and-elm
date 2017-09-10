@@ -3,7 +3,7 @@ module Main exposing (..)
 import Generated.TodoAPI as API exposing (Todo)
 
 import Html as Html exposing (..)
-import Html.Attributes exposing (style, type_, checked, placeholder)
+import Html.Attributes exposing (class, style, type_, checked, placeholder, attribute)
 import Html.Events exposing (onCheck, onClick, onInput)
 import Http
 import RemoteData exposing (RemoteData(..))
@@ -42,7 +42,7 @@ init model =  (model, fetchTodos)
 
 view : Model -> Html Msg
 view model =
-  div []
+  div [ class "container" ]
     [ h1 [] [ text "ToDo List !!" ]
     , viewToDos model
     , viewPost model
@@ -55,25 +55,48 @@ viewToDos model =
     Loading -> text "Loading..."
     Failure err -> text ("Error: " ++ toString err)
     Success todos ->
-      List.map viewTodo todos
-      |> (::) (tr [] [ th [] [ text "ToDo" ], th [] [ text "Done" ], th [] [ text "Delete" ] ])
-      |> table []
+      div
+        [ class "border-bottom" ]
+        [ ul [] $ List.map viewTodo todos ]
 
 viewTodo : API.Todo -> Html Msg
 viewTodo todo =
-  tr [] [ td [] [ text todo.title ]
-        , td [] [ input [ type_ "checkbox"
-                        , checked todo.done
-                        , onCheck (\b -> ChangeTodo $ { todo | done = b })
-                        ] [] ]
-        , td [] [ button [ onClick . Push $ Delete todo.todoId ] [ text "x" ] ]
+  li
+    [ class "Box-row" ]
+    [ label
+        [ class "float-left py-2 pl-3" ]
+        [ input
+            [ type_ "checkbox"
+            , checked todo.done
+            , onCheck (\b -> ChangeTodo $ { todo | done = b })
+            ] []
         ]
+    , div
+        [ class "float-left col-9 p-2 lh-condensed" ]
+        [ div [ class "h4" ] [ text todo.title ] ]
+    , button
+        [ class "btn-link", onClick . Push $ Delete todo.todoId ]
+        [ i
+            [ class "fa fa-trash-o"
+            , attribute "aria-hidden" "true"
+            , style [("color", "#cb2431")]
+            ] []
+        ]
+    ]
 
 viewPost : Model -> Html Msg
 viewPost model =
   div []
-    [ input [  type_ "text", placeholder "Todo Title", onInput Title ] []
-    , span [] [ button [ onClick . Push $ Post model.title ] [ text "Add Todo" ] ]
+    [ input [ class "form-control m-3"
+            , type_ "text"
+            , placeholder "Todo Title"
+            , onInput Title
+            ] []
+    , span [] [ button [ class "btn"
+                       , onClick . Push $ Post model.title
+                       ]
+                       [ text "Add Todo" ]
+              ]
     ]
 
 update : Msg -> Model -> (Model, Cmd Msg)
