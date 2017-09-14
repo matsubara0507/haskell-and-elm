@@ -2,15 +2,16 @@
 
 module Main where
 
-import           Data.Proxy  (Proxy (..))
-import           Elm         (Spec (Spec), specsToDir, toElmDecoderSource,
-                              toElmTypeSource, toElmEncoderSource)
-import           Servant.Elm (ElmOptions (..), UrlPrefix (Static),
-                              defElmImports, defElmOptions,
-                              generateElmForAPIWith)
-import           Shelly      (run_, shelly)
-import           Todo        (CRUD, Todo)
-
+import           Data.Extensible.Instances
+import           Data.Proxy                (Proxy (..))
+import           Elm                       (Spec (Spec), specsToDir,
+                                            toElmDecoderSource,
+                                            toElmEncoderSource, toElmTypeSource)
+import           Servant.Elm               (ElmOptions (..), UrlPrefix (Static),
+                                            defElmImports, defElmOptions,
+                                            generateElmForAPIWith)
+import           Shelly                    (run_, shelly)
+import           Todo                      (CRUD, Todo, example)
 
 elmOpts :: ElmOptions
 elmOpts =
@@ -20,9 +21,9 @@ elmOpts =
 spec :: Spec
 spec = Spec ["Generated", "TodoAPI"]
             (defElmImports
-             : toElmTypeSource    (Proxy :: Proxy Todo)
-             : toElmDecoderSource (Proxy :: Proxy Todo)
-             : toElmEncoderSource (Proxy :: Proxy Todo)
+             : toElmTypeSource    example
+             : toElmDecoderSource example
+             : toElmEncoderSource example
              : generateElmForAPIWith elmOpts  (Proxy :: Proxy CRUD))
 
 main :: IO ()

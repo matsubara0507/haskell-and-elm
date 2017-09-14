@@ -8,7 +8,7 @@ import String
 
 
 type alias Todo =
-    { todoId : Int
+    { id : Int
     , title : String
     , done : Bool
     }
@@ -16,14 +16,14 @@ type alias Todo =
 decodeTodo : Decoder Todo
 decodeTodo =
     decode Todo
-        |> required "todoId" int
+        |> required "id" int
         |> required "title" string
         |> required "done" bool
 
 encodeTodo : Todo -> Json.Encode.Value
 encodeTodo x =
     Json.Encode.object
-        [ ( "todoId", Json.Encode.int x.todoId )
+        [ ( "id", Json.Encode.int x.id )
         , ( "title", Json.Encode.string x.title )
         , ( "done", Json.Encode.bool x.done )
         ]

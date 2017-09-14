@@ -9368,8 +9368,8 @@ var _matsubara0507$haskell_and_elm$Generated_TodoAPI$encodeTodo = function (x) {
 			ctor: '::',
 			_0: {
 				ctor: '_Tuple2',
-				_0: 'todoId',
-				_1: _elm_lang$core$Json_Encode$int(x.todoId)
+				_0: 'id',
+				_1: _elm_lang$core$Json_Encode$int(x.id)
 			},
 			_1: {
 				ctor: '::',
@@ -9427,7 +9427,7 @@ var _matsubara0507$haskell_and_elm$Generated_TodoAPI$putTodosById = F2(
 	});
 var _matsubara0507$haskell_and_elm$Generated_TodoAPI$Todo = F3(
 	function (a, b, c) {
-		return {todoId: a, title: b, done: c};
+		return {id: a, title: b, done: c};
 	});
 var _matsubara0507$haskell_and_elm$Generated_TodoAPI$decodeTodo = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
@@ -9439,7 +9439,7 @@ var _matsubara0507$haskell_and_elm$Generated_TodoAPI$decodeTodo = A3(
 		_elm_lang$core$Json_Decode$string,
 		A3(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'todoId',
+			'id',
 			_elm_lang$core$Json_Decode$int,
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_matsubara0507$haskell_and_elm$Generated_TodoAPI$Todo))));
 var _matsubara0507$haskell_and_elm$Generated_TodoAPI$getTodos = _elm_lang$http$Http$request(
@@ -9611,7 +9611,7 @@ var _matsubara0507$haskell_and_elm$Main$changeTodo = function (todo) {
 		_vmchale$elm_composition$Data_Composition_ops['$'],
 		_elm_lang$http$Http$send(
 			_vmchale$elm_composition$Data_Composition$const(_matsubara0507$haskell_and_elm$Main$Reload)),
-		A2(_matsubara0507$haskell_and_elm$Generated_TodoAPI$putTodosById, todo.todoId, todo));
+		A2(_matsubara0507$haskell_and_elm$Generated_TodoAPI$putTodosById, todo.id, todo));
 };
 var _matsubara0507$haskell_and_elm$Main$addTodo = function (todo) {
 	return A2(
@@ -9780,7 +9780,7 @@ var _matsubara0507$haskell_and_elm$Main$viewTodo = function (todo) {
 								_0: A2(
 									_vmchale$elm_composition$Data_Composition_ops['$'],
 									A2(_vmchale$elm_composition$Data_Composition_ops['.'], _elm_lang$html$Html_Events$onClick, _matsubara0507$haskell_and_elm$Main$Push),
-									_matsubara0507$haskell_and_elm$Main$Delete(todo.todoId)),
+									_matsubara0507$haskell_and_elm$Main$Delete(todo.id)),
 								_1: {ctor: '[]'}
 							}
 						},

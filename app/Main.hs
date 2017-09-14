@@ -1,5 +1,8 @@
 {-# LANGUAGE DataKinds         #-}
+{-# LANGUAGE FlexibleContexts  #-}
+{-# LANGUAGE OverloadedLabels  #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeFamilies      #-}
 {-# LANGUAGE TypeOperators     #-}
 
 module Main where
@@ -7,8 +10,10 @@ module Main where
 import           Control.Arrow             (second)
 import           Control.Concurrent.STM    (TVar, atomically, modifyTVar,
                                             newTVar, readTVar, writeTVar)
+import           Control.Lens              ((&), (.~))
 import           Control.Monad.IO.Class    (liftIO)
-import           Data.Aeson
+import           Data.Aeson                (Object)
+import           Data.Extensible           (emptyRecord, (<:), (@=))
 import           Data.IntMap               (IntMap)
 import qualified Data.IntMap               as IntMap
 import           Data.Proxy                (Proxy (..))
@@ -17,7 +22,7 @@ import           Servant.API               ((:<|>) (..), (:>), Get, Raw)
 import           Servant.EDE               (HTML, loadTemplates)
 import           Servant.Server            (Server, serve)
 import           Servant.Utils.StaticFiles (serveDirectoryFileServer)
-import           Todo                      (Todo (..))
+import           Todo                      (Todo)
 import qualified Todo
 
 main :: IO ()
@@ -48,7 +53,7 @@ server db = index
       (maxId, m) <- readTVar db
       let
         newId = maxId + 1
-        newTodo = todo { todoId = newId }
+        newTodo = todo & #id .~ newId
       writeTVar db (newId, IntMap.insert newId newTodo m)
       pure newTodo
     putTodoId tid todo =
@@ -58,7 +63,7 @@ server db = index
 
 initTodoList :: [(Int, Todo)]
 initTodoList =
-  [ (1, Todo 1 "アドベントカレンダーを書く" True)
-  , (2, Todo 2 "Haskellで仕事する" False)
-  , (3, Todo 3 "寝る" False)
+  [ (1, #id @= 1 <: #title @= "アドベントカレンダーを書く" <: #done @= True <: emptyRecord)
+  , (2, #id @= 2 <: #title @= "Haskellで仕事する" <: #done @= False <: emptyRecord)
+  , (3, #id @= 3 <: #title @= "寝る" <: #done @= False <: emptyRecord)
   ]

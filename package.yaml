@@ -13,6 +13,7 @@ ghc-options: -Wall
 dependencies:
   - aeson
   - base >= 4.7 && < 5
+  - constraints
   - containers
   - extensible
   - elm-export
@@ -23,13 +24,18 @@ dependencies:
   - servant-elm
   - servant-server
   - stm
+  - text
   - transformers
+  - unordered-containers
 
 library:
   source-dirs: src
   exposed-modules:
     - Todo
+    - Data.Extensible.Instances
+    - Elm.Class
   other-modules: []
+  ghc-options: -fno-warn-orphans
 
 executables:
   server:

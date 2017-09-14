@@ -75,7 +75,7 @@ viewTodo todo =
         [ class "float-left col-9 p-2 lh-condensed" ]
         [ div [ class "h4" ] [ text todo.title ] ]
     , button
-        [ class "btn-link", onClick . Push $ Delete todo.todoId ]
+        [ class "btn-link", onClick . Push $ Delete todo.id ]
         [ i
             [ class "fa fa-trash-o"
             , attribute "aria-hidden" "true"
@@ -116,7 +116,7 @@ fetchTodos =
 
 changeTodo : Todo -> Cmd Msg
 changeTodo todo =
-  Http.send (const Reload) $ API.putTodosById todo.todoId todo
+  Http.send (const Reload) $ API.putTodosById todo.id todo
 
 addTodo : Todo -> Cmd Msg
 addTodo todo =

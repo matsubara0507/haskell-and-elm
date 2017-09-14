@@ -1,28 +1,39 @@
-{-# LANGUAGE DataKinds     #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DataKinds            #-}
+{-# LANGUAGE ExplicitNamespaces   #-}
+{-# LANGUAGE FlexibleContexts     #-}
+{-# LANGUAGE FlexibleInstances    #-}
+{-# LANGUAGE OverloadedLabels     #-}
+{-# LANGUAGE OverloadedStrings    #-}
+{-# LANGUAGE TypeFamilies         #-}
+{-# LANGUAGE TypeOperators        #-}
+{-# LANGUAGE TypeSynonymInstances #-}
 
 module Todo where
 
-import           Data.Aeson                  (FromJSON, ToJSON)
+import           Data.Extensible             (type (>:), Record, emptyRecord,
+                                              (<:), (@=))
+import           Data.Extensible.Instances   ()
 import           Data.Proxy                  (Proxy (..))
-import           Elm                         (ElmType)
-import           GHC.Generics                (Generic)
+import           Elm                         (ElmType (..))
+import           Elm.Class
 import           Servant.API                 ((:<|>) (..), (:>), Capture,
                                               Delete, FormUrlEncoded, Get, JSON,
                                               Post, Put, ReqBody)
-import           Web.Internal.FormUrlEncoded (FromForm)
 
-data Todo = Todo
-  { todoId :: Int
-  , title  :: String
-  , done   :: Bool
-  } deriving (Generic, Show)
+type Todo = Record
+  '[ "id" >: Int
+   , "title" >: String
+   , "done" >: Bool
+   ]
 
-instance FromJSON Todo
-instance ToJSON Todo
-instance FromForm Todo
-instance ElmType Todo
+instance ElmType Todo where
+  toElmType = toElmRecordType "Todo"
+
+example :: Todo
+example = #id @= 1
+       <: #title @= "hoge"
+       <: #done @= True
+       <: emptyRecord
 
 type CRUD = "todos" :> Get '[JSON] [Todo]
        :<|> "todos" :> ReqBody '[JSON, FormUrlEncoded] Todo :> Post '[JSON] Todo
