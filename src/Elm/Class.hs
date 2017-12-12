@@ -19,14 +19,9 @@ instance Monoid ElmValue where
 instance ElmType a => ElmType (Identity a) where
   toElmType (Identity a) = toElmType a
 
-elmTypeToElmValue :: ElmType a => a -> ElmValue
-elmTypeToElmValue a =
-  case toElmType a of
-    (ElmDatatype name _) -> ElmRef name
-    (ElmPrimitive prim)  -> ElmPrimitiveRef prim
-
-instance ElmType ElmDatatype where
-  toElmType = id
+elmTypeToElmValue :: ElmDatatype -> ElmValue
+elmTypeToElmValue (ElmDatatype name _) = ElmRef name
+elmTypeToElmValue (ElmPrimitive prim)  = ElmPrimitiveRef prim
 
 toElmRecordType :: ToElmValue a => Text -> a -> ElmDatatype
 toElmRecordType name = ElmDatatype name . RecordConstructor name . toElmValue

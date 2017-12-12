@@ -2,7 +2,6 @@
 
 module Main where
 
-import           Data.Extensible.Instances
 import           Data.Proxy                (Proxy (..))
 import           Elm                       (Spec (Spec), specsToDir,
                                             toElmDecoderSource,
@@ -11,7 +10,7 @@ import           Servant.Elm               (ElmOptions (..), UrlPrefix (Static),
                                             defElmImports, defElmOptions,
                                             generateElmForAPIWith)
 import           Shelly                    (run_, shelly)
-import           Todo                      (CRUD, Todo, example)
+import           Todo                      (CRUD, example)
 
 elmOpts :: ElmOptions
 elmOpts =
