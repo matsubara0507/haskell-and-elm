@@ -4,43 +4,28 @@
 
 name:           haskell-and-elm
 version:        0.1.0.0
-category:       Web
-homepage:       https://github.com/matsubara0507/haskell-and-elm#readme
-author:         MATSUBARA Nobutada
-copyright:      2017 MATSUBARA Nobutada
-license:        MIT
 license-file:   LICENSE
 build-type:     Simple
 cabal-version:  >= 1.10
 
-extra-source-files:
-    README.md
-
 library
   hs-source-dirs:
       src
-  ghc-options: -Wall -fno-warn-orphans
+  ghc-options: -Wall
   build-depends:
       aeson
     , base >= 4.7 && < 5
-    , constraints
     , containers
-    , extensible
     , elm-export
     , http-api-data
-    , lens
     , servant
     , servant-ede
     , servant-elm
     , servant-server
     , stm
-    , text
     , transformers
-    , unordered-containers
   exposed-modules:
       Todo
-      Data.Extensible.Instances
-      Elm.Class
   default-language: Haskell2010
 
 executable server
@@ -51,20 +36,15 @@ executable server
   build-depends:
       aeson
     , base >= 4.7 && < 5
-    , constraints
     , containers
-    , extensible
     , elm-export
     , http-api-data
-    , lens
     , servant
     , servant-ede
     , servant-elm
     , servant-server
     , stm
-    , text
     , transformers
-    , unordered-containers
     , haskell-and-elm
     , warp
   default-language: Haskell2010
@@ -78,20 +58,15 @@ test-suite generate
   build-depends:
       aeson
     , base >= 4.7 && < 5
-    , constraints
     , containers
-    , extensible
     , elm-export
     , http-api-data
-    , lens
     , servant
     , servant-ede
     , servant-elm
     , servant-server
     , stm
-    , text
     , transformers
-    , unordered-containers
     , haskell-and-elm
     , shelly
   default-language: Haskell2010

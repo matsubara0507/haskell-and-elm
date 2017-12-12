@@ -1,44 +1,28 @@
-{-# LANGUAGE DataKinds            #-}
-{-# LANGUAGE ExplicitNamespaces   #-}
-{-# LANGUAGE FlexibleContexts     #-}
-{-# LANGUAGE FlexibleInstances    #-}
-{-# LANGUAGE OverloadedLabels     #-}
-{-# LANGUAGE OverloadedStrings    #-}
-{-# LANGUAGE TypeFamilies         #-}
-{-# LANGUAGE TypeOperators        #-}
-{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE DataKinds     #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Todo where
 
-import           Data.Extensible             (type (>:), Record, emptyRecord,
-                                              (<:), (@=))
-import           Data.Extensible.Instances   ()
-import           Data.Proxy                  (Proxy (..))
-import           Elm                         (ElmType (..))
-import           Elm.Class
-import           Servant.API                 ((:<|>) (..), (:>), Capture,
-                                              Delete, FormUrlEncoded, Get, JSON,
-                                              Post, Put, ReqBody)
+import           Data.Aeson
+import           Elm
+import           GHC.Generics
+import           Servant.API
+import           Web.Internal.FormUrlEncoded (FromForm)
 
-type Todo = Record
-  '[ "id" >: Int
-   , "title" >: String
-   , "done" >: Bool
-   ]
+data Todo = Todo
+  { todoId :: Int
+  , title  :: String
+  , done   :: Bool
+  } deriving (Generic)
 
-instance ElmType Todo where
-  toElmType = toElmRecordType "Todo"
+instance FromJSON Todo
+instance ToJSON Todo
+instance FromForm Todo
+instance ElmType Todo
 
-example :: Todo
-example = #id @= 1
-       <: #title @= "hoge"
-       <: #done @= True
-       <: emptyRecord
-
-type CRUD = "todos" :> Get '[JSON] [Todo]
-       :<|> "todos" :> ReqBody '[JSON, FormUrlEncoded] Todo :> Post '[JSON] Todo
-       :<|> "todos" :> Capture "id" Int :> ReqBody '[JSON, FormUrlEncoded] Todo :> Put '[JSON] ()
-       :<|> "todos" :> Capture "id" Int :> Delete '[JSON] ()
-
-crud :: Proxy CRUD
-crud = Proxy
+type CRUD
+    = "todos" :> Get '[JSON] [Todo]
+ :<|> "todos" :> ReqBody '[JSON, FormUrlEncoded] Todo :> Post '[JSON] Todo
+ :<|> "todos" :> Capture "id" Int :> ReqBody '[JSON, FormUrlEncoded] Todo :> Put '[JSON] ()
+ :<|> "todos" :> Capture "id" Int :> Delete '[JSON] ()

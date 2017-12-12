@@ -15,7 +15,6 @@
         "elm-community/json-extra": "2.0.0 <= v < 3.0.0",
         "elm-community/list-extra": "6.0.0 <= v < 7.0.0",
         "Bogdanp/elm-route": "4.0.0 <= v < 5.0.0",
-        "vmchale/elm-composition": "2.0.0 <= v < 3.0.0",
         "krisajenkins/remotedata": "4.3.0 <= v < 5.0.0",
         "NoRedInk/elm-decode-pipeline": "3.0.0 <= v < 4.0.0"
     },

@@ -1,41 +1,25 @@
 name:                haskell-and-elm
 version:             0.1.0.0
-homepage:            https://github.com/matsubara0507/haskell-and-elm#readme
-license:             MIT
-author:              MATSUBARA Nobutada
-copyright:           2017 MATSUBARA Nobutada
-category:            Web
-extra-source-files:
-  - README.md
-
 ghc-options: -Wall
 
 dependencies:
   - aeson
   - base >= 4.7 && < 5
-  - constraints
   - containers
-  - extensible
   - elm-export
   - http-api-data
-  - lens
   - servant
   - servant-ede
   - servant-elm
   - servant-server
   - stm
-  - text
   - transformers
-  - unordered-containers
 
 library:
   source-dirs: src
   exposed-modules:
     - Todo
-    - Data.Extensible.Instances
-    - Elm.Class
   other-modules: []
-  ghc-options: -fno-warn-orphans
 
 executables:
   server:

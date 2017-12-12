@@ -1,28 +1,21 @@
-{-# LANGUAGE DataKinds         #-}
-{-# LANGUAGE FlexibleContexts  #-}
-{-# LANGUAGE OverloadedLabels  #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeFamilies      #-}
-{-# LANGUAGE TypeOperators     #-}
+{-# LANGUAGE DataKinds     #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Main where
 
 import           Control.Arrow             (second)
-import           Control.Concurrent.STM    (TVar, atomically, modifyTVar,
-                                            newTVar, readTVar, writeTVar)
-import           Control.Lens              ((&), (.~))
+import           Control.Concurrent.STM
 import           Control.Monad.IO.Class    (liftIO)
-import           Data.Aeson                (Object)
-import           Data.Extensible           (emptyRecord, (<:), (@=))
+import           Data.Aeson
 import           Data.IntMap               (IntMap)
 import qualified Data.IntMap               as IntMap
 import           Data.Proxy                (Proxy (..))
 import qualified Network.Wai.Handler.Warp  as Warp
-import           Servant.API               ((:<|>) (..), (:>), Get, Raw)
+import           Servant.API
 import           Servant.EDE               (HTML, loadTemplates)
-import           Servant.Server            (Server, serve)
+import           Servant.Server
 import           Servant.Utils.StaticFiles (serveDirectoryFileServer)
-import           Todo                      (Todo)
+import           Todo                      (Todo (..))
 import qualified Todo
 
 main :: IO ()
@@ -32,9 +25,10 @@ main = do
   putStrLn "Listening on port 8080"
   Warp.run 8080 $ serve api (server db)
 
-type API = Get '[HTML "index.html"] Object
-         :<|> "static" :> Raw
-         :<|> Todo.CRUD
+type API
+    = Get '[HTML "index.html"] Object
+ :<|> "static" :> Raw
+ :<|> Todo.CRUD
 
 api :: Proxy API
 api = Proxy
@@ -53,7 +47,7 @@ server db = index
       (maxId, m) <- readTVar db
       let
         newId = maxId + 1
-        newTodo = todo & #id .~ newId
+        newTodo = todo { todoId = newId }
       writeTVar db (newId, IntMap.insert newId newTodo m)
       pure newTodo
     putTodoId tid todo =
@@ -63,7 +57,7 @@ server db = index
 
 initTodoList :: [(Int, Todo)]
 initTodoList =
-  [ (1, #id @= 1 <: #title @= "アドベントカレンダーを書く" <: #done @= True <: emptyRecord)
-  , (2, #id @= 2 <: #title @= "Haskellで仕事する" <: #done @= False <: emptyRecord)
-  , (3, #id @= 3 <: #title @= "寝る" <: #done @= False <: emptyRecord)
+  [ (1, Todo 1 "アドベントカレンダーを書く" True)
+  , (2, Todo 2 "Haskellで仕事する" False)
+  , (3, Todo 3 "寝る" False)
   ]
