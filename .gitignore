@@ -25,3 +25,4 @@ elm-stuff
 repl-temp-*
 
 main.js
+*.cabal

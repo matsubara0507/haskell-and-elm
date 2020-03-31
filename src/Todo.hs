@@ -1,21 +1,19 @@
-{-# LANGUAGE DataKinds            #-}
-{-# LANGUAGE ExplicitNamespaces   #-}
-{-# LANGUAGE FlexibleContexts     #-}
-{-# LANGUAGE FlexibleInstances    #-}
-{-# LANGUAGE OverloadedLabels     #-}
-{-# LANGUAGE OverloadedStrings    #-}
-{-# LANGUAGE TypeFamilies         #-}
-{-# LANGUAGE TypeOperators        #-}
-{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE DataKinds         #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE OverloadedLabels  #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeOperators     #-}
 
 module Todo where
 
-import           Data.Extensible             (type (>:), Record, emptyRecord,
-                                              (<:), (@=))
-import           Data.Extensible.Instances   ()
+import           Data.Extensible             (type (>:), Record, nil, (<:),
+                                              (@=))
+import           Data.Extensible.Elm.Mapping (compileElmRecordAliasWith,
+                                              compileElmRecordTypeWith)
 import           Data.Proxy                  (Proxy (..))
-import           Elm                         (ElmType (..))
-import           Elm.Class
+import           Elm.Mapping                 (ETypeDef (ETypeAlias),
+                                              IsElmDefinition (..),
+                                              IsElmType (..))
 import           Servant.API                 ((:<|>) (..), (:>), Capture,
                                               Delete, FormUrlEncoded, Get, JSON,
                                               Post, Put, ReqBody)
@@ -26,14 +24,17 @@ type Todo = Record
    , "done" >: Bool
    ]
 
-instance ElmType Todo where
-  toElmType = toElmRecordType "Todo"
+instance IsElmType Todo where
+  compileElmType = compileElmRecordTypeWith "Todo"
+
+instance IsElmDefinition Todo where
+  compileElmDef = ETypeAlias . compileElmRecordAliasWith "Todo"
 
 example :: Todo
 example = #id @= 1
        <: #title @= "hoge"
        <: #done @= True
-       <: emptyRecord
+       <: nil
 
 type CRUD = "todos" :> Get '[JSON] [Todo]
        :<|> "todos" :> ReqBody '[JSON, FormUrlEncoded] Todo :> Post '[JSON] Todo
