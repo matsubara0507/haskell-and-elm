@@ -1,7 +1,13 @@
-resolver: lts-9.18
+resolver: lts-15.5
 packages:
 - .
 extra-deps:
-- servant-ede-0.6
-flags: {}
-extra-package-dbs: []
+- extensible-0.8
+- membership-0
+- servant-stache-0.1.0.0
+- github: matsubara0507/elmap.hs
+  commit: 9c9479d3ead6032a0309b5f80f42e94df85da375
+  subdirs:
+  - elmap
+  - servant-elmap
+  - extensible-elmap

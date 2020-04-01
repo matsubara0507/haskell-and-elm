@@ -1,32 +1,27 @@
+{-# LANGUAGE DataKinds         #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeApplications  #-}
+{-# LANGUAGE TypeOperators     #-}
 
 module Main where
 
-import           Data.Proxy                (Proxy (..))
-import           Elm                       (Spec (Spec), specsToDir,
-                                            toElmDecoderSource,
-                                            toElmEncoderSource, toElmTypeSource)
-import           Servant.Elm               (ElmOptions (..), UrlPrefix (Static),
-                                            defElmImports, defElmOptions,
-                                            generateElmForAPIWith)
-import           Shelly                    (run_, shelly)
-import           Todo                      (CRUD, example)
-
-elmOpts :: ElmOptions
-elmOpts =
-  defElmOptions
-    { urlPrefix = Static "http://localhost:8080" }
-
-spec :: Spec
-spec = Spec ["Generated", "TodoAPI"]
-            (defElmImports
-             : toElmTypeSource    example
-             : toElmDecoderSource example
-             : toElmEncoderSource example
-             : generateElmForAPIWith elmOpts  (Proxy :: Proxy CRUD))
+import           Elm.Mapping
+import           Servant             ((:>))
+import           Servant.Elm.Mapping (defElmImports, defElmOptions,
+                                      generateElmModuleWith)
+import           System.Process      (system)
+import           Todo                (CRUD, Todo)
 
 main :: IO ()
 main = do
-  specsToDir [spec] "elm-src"
-  shelly $
-    run_ "elm-make" ["elm-src/Main.elm", "--output=static/main.js"]
+  generateElmModuleWith
+    defElmOptions
+    ["Generated", "API"]
+    defElmImports
+    "elm-src"
+    [DefineElm (Proxy @ Todo)]
+    (Proxy @ ("api" :> CRUD))
+  mapM_ system
+    [ "elm make elm-src/Main.elm --output=static/main.js"
+    , "elm-format --yes elm-src/Generated/"
+    ]

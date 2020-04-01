@@ -13,15 +13,17 @@ ghc-options: -Wall
 dependencies:
   - aeson
   - base >= 4.7 && < 5
+  - blaze-html
   - constraints
   - containers
+  - elmap
   - extensible
-  - elm-export
+  - extensible-elmap
   - http-api-data
-  - lens
+  - microlens
   - servant
-  - servant-ede
-  - servant-elm
+  - servant-blaze
+  - servant-elmap
   - servant-server
   - stm
   - text
@@ -30,11 +32,6 @@ dependencies:
 
 library:
   source-dirs: src
-  exposed-modules:
-    - Todo
-    - Data.Extensible.Instances
-    - Elm.Class
-  other-modules: []
   ghc-options: -fno-warn-orphans
 
 executables:
@@ -44,7 +41,8 @@ executables:
     dependencies:
       - haskell-and-elm
       - warp
-    other-modules: []
+    other-modules:
+    - Orphans
 
 tests:
   generate:
@@ -52,5 +50,5 @@ tests:
     main: Generate.hs
     dependencies:
       - haskell-and-elm
-      - shelly
+      - process
     other-modules: []
