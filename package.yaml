@@ -33,6 +33,7 @@ dependencies:
   - time
   - transformers
   - unordered-containers
+  - wreq
 
 library:
   source-dirs: src

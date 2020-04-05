@@ -12,7 +12,6 @@ import qualified Control.Concurrent.STM      as STM
 import           Data.Extensible             (nil, (<:), (@=))
 import qualified Data.IntMap                 as IntMap
 import           Data.Proxy                  (Proxy (..))
-import           Data.String                 (fromString)
 import qualified Data.Time                   as Time
 import qualified Network.Wai.Handler.Warp    as Warp
 import           Orphans                     ()
@@ -26,22 +25,23 @@ import           Todo                        (Todo)
 
 main :: IO ()
 main = do
-  todoDB <- STM.atomically $ STM.newTVar (length initTodos, IntMap.fromList initTodos)
-  userDB <- STM.atomically $ STM.newTVar mempty
-  clientId <- fromString <$> getEnv "GITHUB_CLIENT_ID"
-  jwtSettings <- defaultJWTSettings <$> generateKey
-  let cfg = cookieSettings :. jwtSettings :. EmptyContext
-      env = #index  @= indexHtml
-         <: #cookie @= cookieSettings
-         <: #jwt    @= jwtSettings
-         <: #todos  @= todoDB
-         <: #users  @= userDB
-         <: #oauth  @= (#client_id @= clientId <: #client_secret @= "" <: nil)
-         <: nil
+  todoDB       <- STM.atomically $ STM.newTVar initTodoDB
+  clientId     <- getEnv "GITHUB_CLIENT_ID"
+  clientSecret <- getEnv "GITHUB_CLIENT_SECRET"
+  jwtSettings  <- defaultJWTSettings <$> generateKey
+  let cfg   = cookieSettings :. jwtSettings :. EmptyContext
+      oauth = #client_id @= clientId <: #client_secret @= clientSecret <: nil
+      env   = #index  @= indexHtml
+           <: #cookie @= cookieSettings
+           <: #jwt    @= jwtSettings
+           <: #todos  @= todoDB
+           <: #oauth  @= oauth
+           <: nil
   putStrLn "Listening on port 8080"
   Warp.run 8080 $
     serveWithContext api cfg (server env)
   where
+    initTodoDB = (length initTodos, IntMap.fromList initTodos)
     cookieSettings = defaultCookieSettings
       { cookieIsSecure = NotSecure -- localhost only
       , cookieMaxAge = Just $ Time.secondsToDiffTime (3 * 60)

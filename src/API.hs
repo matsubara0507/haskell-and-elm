@@ -15,9 +15,9 @@ import           Control.Arrow              (second)
 import qualified Control.Concurrent.STM     as STM
 import           Control.Monad.Except       (MonadError (..))
 import           Control.Monad.IO.Class     (liftIO)
-import           Data.Extensible
 import qualified Data.IntMap                as IntMap
 import           Env
+import qualified GitHub
 import           Lens.Micro                 ((&), (.~), (^.))
 import           Servant.API
 import           Servant.Auth.Server
@@ -27,7 +27,7 @@ import           Servant.Server.StaticFiles (serveDirectoryFileServer)
 import qualified Text.Blaze.Html5           as H
 import qualified Todo
 
-type API auth = (Auth auth User :> Protected) :<|> Unprotected
+type API auth = (Auth auth GitHub.User :> Protected) :<|> Unprotected
 
 type Protected
       = "api" :> Todo.CRUD
@@ -47,7 +47,7 @@ type JWTCookieHeaders =
 server :: Env -> Server (API auths)
 server env = protected env :<|> unprotected env
 
-protected :: Env -> AuthResult User -> Server Protected
+protected :: Env -> AuthResult GitHub.User -> Server Protected
 protected env (Authenticated _) = todoAPI (env ^. #todos)
 protected _ _                   = pure [] :<|> throwAll err401
 
@@ -70,13 +70,10 @@ unprotected :: Env -> Server Unprotected
 unprotected env =
   pure (env ^. #index) :<|> serveDirectoryFileServer "static" :<|> login :<|> callback
   where
-    login = pure $ addHeader (authRedirectUrl ++ clientId) NoContent
-    authRedirectUrl = "https://github.com/login/oauth/authorize?client_id="
-    clientId = env ^. #oauth ^. #client_id
-
-    callback _code = do
-    -- github token => user => set cookie
-      let user = #account @= "temp" <: #email @= "hoge@example.com" <: nil :: User
-      liftIO (acceptLogin (env ^. #cookie) (env ^. #jwt) user) >>= \case
+    login = pure $ addHeader (GitHub.authorizeUrl $ env ^. #oauth) NoContent
+    callback (Just code) = GitHub.fetchUser (env ^. #oauth) code >>= \case
+      Nothing   -> throwError err401
+      Just user -> liftIO (acceptLogin (env ^. #cookie) (env ^. #jwt) user) >>= \case
         Nothing           -> throwError err401
         Just applyCookies -> pure $ addHeader "/" (applyCookies NoContent)
+    callback _ = throwError err401
