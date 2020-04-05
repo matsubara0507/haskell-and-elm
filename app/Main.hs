@@ -13,6 +13,7 @@ import           Data.Extensible             (nil, (<:), (@=))
 import qualified Data.IntMap                 as IntMap
 import           Data.Proxy                  (Proxy (..))
 import qualified Data.Time                   as Time
+import           Env                         (convert)
 import qualified Network.Wai.Handler.Warp    as Warp
 import           Orphans                     ()
 import           Servant.Auth.Server
@@ -39,7 +40,7 @@ main = do
            <: nil
   putStrLn "Listening on port 8080"
   Warp.run 8080 $
-    serveWithContext api cfg (server env)
+    serveWithContext api cfg (hoistServerWithContext api ctx (convert env) server)
   where
     initTodoDB = (length initTodos, IntMap.fromList initTodos)
     cookieSettings = defaultCookieSettings
@@ -51,7 +52,7 @@ main = do
 api :: Proxy (API '[Cookie])
 api = Proxy
 
-ctx :: Proxy '[ CookieSettings, JWTSettings]
+ctx :: Proxy '[ CookieSettings, JWTSettings ]
 ctx = Proxy
 
 indexHtml :: H.Html

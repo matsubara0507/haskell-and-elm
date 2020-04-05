@@ -4,6 +4,7 @@
 {-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedLabels  #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeFamilies      #-}
 {-# LANGUAGE TypeOperators     #-}
 
 module API
@@ -15,10 +16,12 @@ import           Control.Arrow              (second)
 import qualified Control.Concurrent.STM     as STM
 import           Control.Monad.Except       (MonadError (..))
 import           Control.Monad.IO.Class     (liftIO)
+import           Control.Monad.Reader       (ask, asks)
 import qualified Data.IntMap                as IntMap
 import           Env
 import qualified GitHub
 import           Lens.Micro                 ((&), (.~), (^.))
+import           Lens.Micro.Extras          (view)
 import           Servant.API
 import           Servant.Auth.Server
 import           Servant.HTML.Blaze
@@ -44,36 +47,46 @@ type GetRedirected headers =
 type JWTCookieHeaders =
   '[ Header "Set-Cookie" SetCookie, Header "Set-Cookie" SetCookie ]
 
-server :: Env -> Server (API auths)
-server env = protected env :<|> unprotected env
+server :: ServerT (API auths) App
+server = protected :<|> unprotected
 
-protected :: Env -> AuthResult GitHub.User -> Server Protected
-protected env (Authenticated _) = todoAPI (env ^. #todos)
-protected _ _                   = pure [] :<|> throwAll err401
+protected :: AuthResult GitHub.User -> ServerT Protected App
+protected (Authenticated _) = todoAPI
+protected _                 = pure [] :<|> throwAll err401
 
-todoAPI :: TodoDB -> Server Todo.CRUD
-todoAPI db = getTodos :<|> postTodo :<|> putTodoId :<|> deleteTodoId
+todoAPI :: ServerT Todo.CRUD App
+todoAPI = getTodos :<|> postTodo :<|> putTodoId :<|> deleteTodoId
   where
-    getTodos = liftIO $ IntMap.elems . snd <$> STM.atomically (STM.readTVar db)
-    postTodo todo = liftIO . STM.atomically $ do
-      (maxId, m) <- STM.readTVar db
-      let newId = maxId + 1
-          newTodo = todo & #id .~ newId
-      STM.writeTVar db (newId, IntMap.insert newId newTodo m)
-      pure newTodo
-    putTodoId tid todo =
+    getTodos = do
+      db <- asks (view #todos)
+      liftIO $ IntMap.elems . snd <$> STM.atomically (STM.readTVar db)
+    postTodo todo = do
+      db <- asks (view #todos)
+      liftIO . STM.atomically $ do
+        (maxId, m) <- STM.readTVar db
+        let newId = maxId + 1
+            newTodo = todo & #id .~ newId
+        STM.writeTVar db (newId, IntMap.insert newId newTodo m)
+        pure newTodo
+    putTodoId tid todo = do
+      db <- asks (view #todos)
       liftIO . STM.atomically . STM.modifyTVar db . second $ IntMap.insert tid todo
-    deleteTodoId tid   =
+    deleteTodoId tid = do
+      db <- asks (view #todos)
       liftIO . STM.atomically . STM.modifyTVar db . second $ IntMap.delete tid
 
-unprotected :: Env -> Server Unprotected
-unprotected env =
-  pure (env ^. #index) :<|> serveDirectoryFileServer "static" :<|> login :<|> callback
+unprotected :: ServerT Unprotected App
+unprotected =
+  asks (view #index) :<|> serveDirectoryFileServer "static" :<|> login :<|> callback
   where
-    login = pure $ addHeader (GitHub.authorizeUrl $ env ^. #oauth) NoContent
-    callback (Just code) = GitHub.fetchUser (env ^. #oauth) code >>= \case
-      Nothing   -> throwError err401
-      Just user -> liftIO (acceptLogin (env ^. #cookie) (env ^. #jwt) user) >>= \case
-        Nothing           -> throwError err401
-        Just applyCookies -> pure $ addHeader "/" (applyCookies NoContent)
+    login = do
+      oauth <- asks (view #oauth)
+      pure $ addHeader (GitHub.authorizeUrl oauth) NoContent
+    callback (Just code) = do
+      env <- ask
+      GitHub.fetchUser (env ^. #oauth) code >>= \case
+        Nothing   -> throwError err401
+        Just user -> liftIO (acceptLogin (env ^. #cookie) (env ^. #jwt) user) >>= \case
+          Nothing           -> throwError err401
+          Just applyCookies -> pure $ addHeader "/" (applyCookies NoContent)
     callback _ = throwError err401
