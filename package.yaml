@@ -14,6 +14,7 @@ dependencies:
   - aeson
   - base >= 4.7 && < 5
   - blaze-html
+  - bytestring
   - constraints
   - containers
   - elmap
@@ -21,12 +22,15 @@ dependencies:
   - extensible-elmap
   - http-api-data
   - microlens
+  - mtl
   - servant
+  - servant-auth-server
   - servant-blaze
   - servant-elmap
   - servant-server
   - stm
   - text
+  - time
   - transformers
   - unordered-containers
 
