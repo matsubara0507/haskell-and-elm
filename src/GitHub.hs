@@ -41,7 +41,7 @@ authorizeUrl settings =
 fetchUser :: MonadIO m => OAuthSettings -> String -> m (Maybe User)
 fetchUser settings code =
   fetchToken (shrink $ #code @= code <: settings) >>= \case
-    Just token -> (^. W.responseBody) <$> (liftIO $ W.asJSON =<< fetch' token)
+    Just token -> (^. W.responseBody) <$> liftIO (W.asJSON =<< fetch' token)
     Nothing    -> pure Nothing
   where
     fetch' t = W.getWith (W.defaults & W.auth ?~ W.oauth2Bearer t) url
