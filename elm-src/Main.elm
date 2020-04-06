@@ -3,7 +3,7 @@ module Main exposing (main)
 import Browser as Browser
 import Generated.API as API exposing (Todo)
 import Html as Html exposing (..)
-import Html.Attributes exposing (attribute, checked, class, placeholder, style, type_)
+import Html.Attributes exposing (attribute, checked, class, href, placeholder, style, type_)
 import Html.Events exposing (onCheck, onClick, onInput)
 import Http
 import RemoteData exposing (RemoteData(..))
@@ -51,9 +51,21 @@ init model =
 view : Model -> Html Msg
 view model =
     div [ class "my-3 mx-auto col-10" ]
-        [ h1 [] [ text "ToDo List !!" ]
+        [ h1 [] [ text "ToDo List !!", loginButton ]
         , viewToDos model
         , viewPost model
+        ]
+
+
+loginButton : Html msg
+loginButton =
+    button [ class "btn btn-sm btn-outline float-right mt-2", type_ "button" ]
+        [ a
+            [ href "/login"
+            , style "color" "inherit"
+            , style "text-decoration-line" "none"
+            ]
+            [ text "Login by GitHub" ]
         ]
 
 
