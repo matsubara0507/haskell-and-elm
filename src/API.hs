@@ -8,6 +8,7 @@
 
 module API
   ( API
+  , GetRedirected
   , server
   ) where
 
@@ -51,7 +52,7 @@ server = protected :<|> unprotected
 
 protected :: AuthResult GitHub.User -> ServerT Protected App
 protected (Authenticated _) = todoAPI
-protected _                 = pure [] :<|> throwAll err401
+protected _                 = throwAll err401
 
 todoAPI :: ServerT Todo.CRUD App
 todoAPI = getTodos :<|> postTodo :<|> putTodoId :<|> deleteTodoId
